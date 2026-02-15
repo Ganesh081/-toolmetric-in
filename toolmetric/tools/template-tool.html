@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{TITLE}}</title>
+  <meta name="description" content="{{META}}">
+  <link rel="stylesheet" href="../style.css">
+  <script src="../main.js" defer></script>
+</head>
+<body>
+  <header class="nav container">
+    <div class="logo">ToolMetric</div>
+    <nav class="nav-links">
+      <a href="../">Home</a>
+      <a href="../blog/index.html">Blog</a>
+      <a href="../about.html">About</a>
+      <a href="../contact.html" class="cta">Contact</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="ad-placeholder">[AdSense top placeholder]</div>
+
+    <h1>{{H1}}</h1>
+    <p class="muted">{{META}}</p>
+
+    <div class="tool-ui card">
+      <div class="dropzone" id="dropzone">
+        <p>Drag & drop your file here</p>
+        <div class="filename muted">No file selected</div>
+        <input type="file" id="fileInput">
+      </div>
+      <div class="controls">
+        <button class="btn" id="processBtn">Process</button>
+        <button class="btn secondary" id="downloadBtn" style="display:none;">Download</button>
+      </div>
+      <div class="progress"><i style="width:0%"></i></div>
+    </div>
+
+    <div class="ad-placeholder">[AdSense middle placeholder]</div>
+
+    <article>
+      <h2>About {{TOOLNAME}}</h2>
+      <p>{{CONTENT}}</p>
+
+      <h3>Step-by-step guide</h3>
+      <ol>
+        {{STEPS}}
+      </ol>
+
+      <h3>FAQ</h3>
+      <div class="grid">
+        {{FAQ}}
+      </div>
+
+      <h3>Related tools</h3>
+      <div class="grid">
+        <a class="card" href="compress-pdf.html">Compress PDF</a>
+        <a class="card" href="merge-pdf.html">Merge PDF</a>
+        <a class="card" href="split-pdf.html">Split PDF</a>
+      </div>
+    </article>
+
+    <div class="ad-placeholder">[AdSense bottom placeholder]</div>
+  </main>
+
+  <footer>
+    <div class="container footer-grid"><div><strong>ToolMetric</strong></div><div><a href="../legal/privacy-policy.html">Privacy</a></div></div>
+  </footer>
+
+  <script>
+    // Wiring: map pages to ToolMetric functions by filename pattern
+    (function(){
+      const fnMap = {
+        'compress-pdf.html':'compressPDF','remove-blank-pages.html':'removeBlankPages','split-pdf.html':'splitPDF','rotate-pdf.html':'rotatePDF','merge-pdf.html':'mergePDFs','pdf-to-word.html':'pdfToWord','word-to-pdf.html':'wordToPDF','pdf-to-jpg.html':'pdfToJPG','jpg-to-pdf.html':'jpgToPDF','add-page-numbers.html':'addPageNumbers','remove-page-numbers.html':'removePageNumbers','add-watermark.html':'addWatermark','remove-metadata.html':'removeMetadata','crop-pdf.html':'cropPDF','extract-images.html':'extractImages','pdf-to-png.html':'pdfToPNG','reorder-pages.html':'reorderPages','delete-pages.html':'deletePages','extract-first-page.html':'extractFirstPage','extract-last-page.html':'extractLastPage'
+      };
+      const path = location.pathname.split('/').pop(); const fn = fnMap[path];
+      const fileInput = document.getElementById('fileInput'); const drop = document.getElementById('dropzone'); const processBtn = document.getElementById('processBtn'); const downloadBtn = document.getElementById('downloadBtn');
+      let lastResult=null;
+      drop.addEventListener('fileselected', (e)=>{ lastFile=e.detail; });
+      processBtn.addEventListener('click', async ()=>{
+        const file = fileInput.files[0]; if(!file){alert('Please select a file');return}
+        try{ showProgress(2); const res = await window.ToolMetric[fn](file); lastResult=res; downloadBtn.style.display='inline-block'; }catch(err){console.error(err)}
+      });
+      downloadBtn.addEventListener('click', ()=>{ if(!lastResult) alert('No result ready'); });
+    })();
+  </script>
+</body>
+</html>

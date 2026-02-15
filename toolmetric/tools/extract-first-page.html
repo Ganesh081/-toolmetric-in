@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Extract First Page — ToolMetric</title>
+  <meta name="description" content="Extract the first page of a PDF into a new PDF file, locally in your browser.">
+  <link rel="stylesheet" href="../style.css">
+  <script src="../main.js" defer></script>
+</head>
+<body>
+  <header class="nav container"><div class="logo">ToolMetric</div><nav class="nav-links"><a href="../">Home</a><a href="../blog/index.html">Blog</a><a href="../about.html">About</a><a href="../contact.html" class="cta">Contact</a></nav></header>
+  <main class="container">
+    <div class="ad-placeholder">[AdSense top placeholder]</div>
+    <h1>Extract First Page</h1>
+    <p class="muted">Extract only the first page from a PDF and save it as a separate file.</p>
+    <div class="tool-ui card">
+      <div class="dropzone" id="dropzone"><p>Drop a PDF</p><div class="filename muted">No file selected</div><input type="file" id="fileInput"></div>
+      <div class="controls"><button class="btn" id="processBtn">Extract</button><button class="btn secondary" id="downloadBtn" style="display:none;">Download</button></div>
+      <div class="progress"><i style="width:0%"></i></div>
+    </div>
+    <div class="ad-placeholder">[AdSense middle placeholder]</div>
+    <article>
+      <h2>About Extract First Page</h2>
+      <p>Extract the first page into a standalone PDF — useful for preview pages, cover pages, or sending only the first page of a document.</p>
+      <h3>Step-by-step guide</h3>
+      <ol><li>Upload a PDF.</li><li>Click "Extract" to create a single-page PDF.</li><li>Download the result.</li></ol>
+      <h3>FAQ</h3>
+      <div class="grid"><div class="faq-item"><strong>Is it free?</strong><p>Yes.</p></div><div class="faq-item"><strong>Files uploaded?</strong><p>No.</p></div><div class="faq-item"><strong>Supported browsers?</strong><p>Modern browsers.</p></div><div class="faq-item"><strong>What about multiple pages?</strong><p>Use Split PDF for more complex extraction.</p></div><div class="faq-item"><strong>Any limits?</strong><p>Depends on device memory.</p></div></div>
+      <h3>Related tools</h3>
+      <div class="grid"><a class="card" href="split-pdf.html">Split PDF</a><a class="card" href="extract-last-page.html">Extract Last Page</a><a class="card" href="delete-pages.html">Delete Pages</a></div>
+    </article>
+    <div class="ad-placeholder">[AdSense bottom placeholder]</div>
+  </main>
+  <footer><div class="container footer-grid"><div><strong>ToolMetric</strong></div><div><a href="../legal/privacy-policy.html">Privacy</a></div></div></footer>
+  <script>
+    (function(){ const f=document.getElementById('fileInput'), btn=document.getElementById('processBtn'), dl=document.getElementById('downloadBtn'); let out=null; btn.addEventListener('click',async()=>{ const file=f.files[0]; if(!file){alert('Choose a file');return} try{ out = await window.ToolMetric.extractFirstPage(file); dl.style.display='inline-block'; }catch(e){console.error(e)} }); dl.addEventListener('click',()=>{ if(out) window.ToolMetric.downloadPDF(out,'firstpage-'+(f.files[0]?.name||'result.pdf')); else alert('No output'); }); })();
+  </script>
+</body>
+</html>

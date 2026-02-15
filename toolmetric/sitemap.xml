@@ -1,5 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>/toolmetric/</loc></url>
+  <url><loc>/toolmetric/index.html</loc></url>
+  <url><loc>/toolmetric/about.html</loc></url>
+  <url><loc>/toolmetric/contact.html</loc></url>
+  <!-- Tools -->
+  <url><loc>/toolmetric/tools/compress-pdf.html</loc></url>
+  <url><loc>/toolmetric/tools/remove-blank-pages.html</loc></url>
+  <url><loc>/toolmetric/tools/split-pdf.html</loc></url>
+  <url><loc>/toolmetric/tools/rotate-pdf.html</loc></url>
+  <url><loc>/toolmetric/tools/merge-pdf.html</loc></url>
+  <url><loc>/toolmetric/tools/pdf-to-word.html</loc></url>
+  <url><loc>/toolmetric/tools/word-to-pdf.html</loc></url>
+  <url><loc>/toolmetric/tools/pdf-to-jpg.html</loc></url>
+  <url><loc>/toolmetric/tools/jpg-to-pdf.html</loc></url>
+  <url><loc>/toolmetric/tools/add-page-numbers.html</loc></url>
+  <url><loc>/toolmetric/tools/remove-page-numbers.html</loc></url>
+  <url><loc>/toolmetric/tools/add-watermark.html</loc></url>
+  <url><loc>/toolmetric/tools/remove-metadata.html</loc></url>
+  <url><loc>/toolmetric/tools/crop-pdf.html</loc></url>
+  <url><loc>/toolmetric/tools/extract-images.html</loc></url>
+  <url><loc>/toolmetric/tools/pdf-to-png.html</loc></url>
+  <url><loc>/toolmetric/tools/reorder-pages.html</loc></url>
+  <url><loc>/toolmetric/tools/delete-pages.html</loc></url>
+  <url><loc>/toolmetric/tools/extract-first-page.html</loc></url>
+  <url><loc>/toolmetric/tools/extract-last-page.html</loc></url>
+  <!-- Blog -->
+  <url><loc>/toolmetric/blog/index.html</loc></url>
+  <url><loc>/toolmetric/blog/how-to-compress-pdf.html</loc></url>
+  <url><loc>/toolmetric/blog/pdf-security-guide.html</loc></url>
+  <url><loc>/toolmetric/blog/best-pdf-tools.html</loc></url>
+  <url><loc>/toolmetric/blog/remove-blank-pages-guide.html</loc></url>
+  <!-- Legal -->
+  <url><loc>/toolmetric/legal/privacy-policy.html</loc></url>
+  <url><loc>/toolmetric/legal/terms.html</loc></url>
+  <url><loc>/toolmetric/legal/disclaimer.html</loc></url>
+</urlset>
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://toolmetric.in/</loc></url>
   <url><loc>https://toolmetric.in/tools/compress-pdf-to-200kb.html</loc></url>
   <url><loc>https://toolmetric.in/legal/privacy-policy.html</loc></url>

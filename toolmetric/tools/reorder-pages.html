@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Reorder Pages — ToolMetric</title>
+  <meta name="description" content="Reorder pages in a PDF by specifying a new order. Client-side tool.">
+  <link rel="stylesheet" href="../style.css">
+  <script src="../main.js" defer></script>
+</head>
+<body>
+  <header class="nav container"><div class="logo">ToolMetric</div><nav class="nav-links"><a href="../">Home</a><a href="../blog/index.html">Blog</a><a href="../about.html">About</a><a href="../contact.html" class="cta">Contact</a></nav></header>
+  <main class="container">
+    <div class="ad-placeholder">[AdSense top placeholder]</div>
+    <h1>Reorder Pages</h1>
+    <p class="muted">Rearrange pages by specifying a new order like <code>3,1,2</code>.</p>
+    <div class="tool-ui card">
+      <div class="dropzone" id="dropzone"><p>Drop a PDF</p><div class="filename muted">No file selected</div><input type="file" id="fileInput"></div>
+      <div class="controls"><input id="order" placeholder="New order e.g. 3,1,2" style="padding:8px;border-radius:8px;border:1px solid #e6e7ea"><button class="btn" id="processBtn">Reorder</button><button class="btn secondary" id="downloadBtn" style="display:none;">Download</button></div>
+      <div class="progress"><i style="width:0%"></i></div>
+    </div>
+    <div class="ad-placeholder">[AdSense middle placeholder]</div>
+    <article>
+      <h2>About Reorder Pages</h2>
+      <p>Reorder the pages in your PDF by defining a comma-separated list of page numbers in the desired sequence. Pages are 1-based.</p>
+      <h3>Step-by-step guide</h3>
+      <ol><li>Upload a PDF.</li><li>Enter the new page order as numbers separated by commas.</li><li>Click "Reorder" and download the rearranged file.</li></ol>
+      <h3>FAQ</h3>
+      <div class="grid"><div class="faq-item"><strong>What if numbers are invalid?</strong><p>Invalid numbers are ignored.</p></div><div class="faq-item"><strong>Files uploaded?</strong><p>No.</p></div><div class="faq-item"><strong>Free?</strong><p>Yes.</p></div><div class="faq-item"><strong>Supported browsers?</strong><p>Modern browsers.</p></div><div class="faq-item"><strong>Any limits?</strong><p>Limited by memory for large PDFs.</p></div></div>
+      <h3>Related tools</h3>
+      <div class="grid"><a class="card" href="split-pdf.html">Split PDF</a><a class="card" href="merge-pdf.html">Merge PDF</a><a class="card" href="delete-pages.html">Delete Pages</a></div>
+    </article>
+    <div class="ad-placeholder">[AdSense bottom placeholder]</div>
+  </main>
+  <footer><div class="container footer-grid"><div><strong>ToolMetric</strong></div><div><a href="../legal/privacy-policy.html">Privacy</a></div></div></footer>
+  <script>
+    (function(){ const f=document.getElementById('fileInput'), btn=document.getElementById('processBtn'), o=document.getElementById('order'), dl=document.getElementById('downloadBtn'); let out=null; btn.addEventListener('click',async()=>{ const file=f.files[0]; if(!file){alert('Choose a file');return} try{ const order = o.value.split(',').map(Number); out = await window.ToolMetric.reorderPages(file, order); dl.style.display='inline-block'; }catch(e){console.error(e)} }); dl.addEventListener('click',()=>{ if(out) window.ToolMetric.downloadPDF(out,'reordered-'+(f.files[0]?.name||'result.pdf')); else alert('No output'); }); })();
+  </script>
+</body>
+</html>

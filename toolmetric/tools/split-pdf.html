@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Split PDF — ToolMetric</title>
+  <meta name="description" content="Split PDF into separate pages or custom ranges entirely in your browser. Fast and private.">
+  <link rel="stylesheet" href="../style.css">
+  <script src="../main.js" defer></script>
+</head>
+<body>
+  <header class="nav container"><div class="logo">ToolMetric</div><nav class="nav-links"><a href="../">Home</a><a href="../blog/index.html">Blog</a><a href="../about.html">About</a><a href="../contact.html" class="cta">Contact</a></nav></header>
+  <main class="container">
+    <div class="ad-placeholder">[AdSense top placeholder]</div>
+    <h1>Split PDF</h1>
+    <p class="muted">Extract specific pages or ranges from a PDF to create a new document.</p>
+    <div class="tool-ui card">
+      <div class="dropzone" id="dropzone"><p>Drag & drop your PDF</p><div class="filename muted">No file selected</div><input type="file" id="fileInput"></div>
+      <div class="controls"><input placeholder="Pages (e.g. 1-3,5)" id="pages" style="padding:8px;border-radius:8px;border:1px solid #e6e7ea"><button class="btn" id="processBtn">Split</button><button class="btn secondary" id="downloadBtn" style="display:none;">Download</button></div>
+      <div class="progress"><i style="width:0%"></i></div>
+    </div>
+    <div class="ad-placeholder">[AdSense middle placeholder]</div>
+    <article>
+      <h2>About Split PDF</h2>
+      <p>Split PDF allows you to extract exact pages or page ranges to create a new PDF. This is useful for sharing only the relevant portion of a document or creating smaller PDFs from a larger source. The operation runs completely in-browser, so your data remains private.</p>
+      <h3>Step-by-step guide</h3>
+      <ol><li>Upload a PDF.</li><li>Enter pages or ranges like <code>1-3,5</code>.</li><li>Click "Split" and download the new PDF.</li></ol>
+      <h3>FAQ</h3>
+      <div class="grid"><div class="faq-item"><strong>Can I split multiple ranges?</strong><p>Yes — separate ranges with commas.</p></div><div class="faq-item"><strong>Are pages 1-based?</strong><p>Yes — use 1 for the first page.</p></div><div class="faq-item"><strong>Do files leave my device?</strong><p>No.</p></div><div class="faq-item"><strong>Supported browsers?</strong><p>Modern browsers.</p></div><div class="faq-item"><strong>Is it free?</strong><p>Yes.</p></div></div>
+      <h3>Related tools</h3>
+      <div class="grid"><a class="card" href="extract-first-page.html">Extract First Page</a><a class="card" href="extract-last-page.html">Extract Last Page</a><a class="card" href="delete-pages.html">Delete Pages</a></div>
+    </article>
+    <div class="ad-placeholder">[AdSense bottom placeholder]</div>
+  </main>
+  <footer><div class="container footer-grid"><div><strong>ToolMetric</strong></div><div><a href="../legal/privacy-policy.html">Privacy</a></div></div></footer>
+  <script>
+    (function(){ const fi=document.getElementById('fileInput'), btn=document.getElementById('processBtn'), pages=document.getElementById('pages'), dl=document.getElementById('downloadBtn'); let out=null; btn.addEventListener('click',async()=>{ const f=fi.files[0]; if(!f){alert('Choose a file');return} const range = pages.value||'1'; try{ out = await window.ToolMetric.splitPDF(f, range); dl.style.display='inline-block'; }catch(e){console.error(e)} }); dl.addEventListener('click',()=>{ if(out) window.ToolMetric.downloadPDF(out, 'split-'+(fi.files[0]?.name||'result.pdf')); else alert('No output'); }); })();
+  </script>
+</body>
+</html>

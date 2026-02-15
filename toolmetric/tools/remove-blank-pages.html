@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Remove Blank Pages — ToolMetric</title>
+  <meta name="description" content="Detect and remove blank pages from PDF files locally in your browser. ToolMetric keeps your files private.">
+  <link rel="stylesheet" href="../style.css">
+  <script src="../main.js" defer></script>
+</head>
+<body>
+  <header class="nav container">
+    <div class="logo">ToolMetric</div>
+    <nav class="nav-links">
+      <a href="../">Home</a>
+      <a href="../blog/index.html">Blog</a>
+      <a href="../about.html">About</a>
+      <a href="../contact.html" class="cta">Contact</a>
+    </nav>
+  </header>
+  <main class="container">
+    <div class="ad-placeholder">[AdSense top placeholder]</div>
+    <h1>Remove Blank Pages</h1>
+    <p class="muted">Automatically detect and delete blank or nearly-blank pages from your PDF documents.</p>
+    <div class="tool-ui card">
+      <div class="dropzone" id="dropzone"><p>Drag & drop your file here</p><div class="filename muted">No file selected</div><input type="file" id="fileInput"></div>
+      <div class="controls"><button class="btn" id="processBtn">Remove Blank Pages</button><button class="btn secondary" id="downloadBtn" style="display:none;">Download</button></div>
+      <div class="progress"><i style="width:0%"></i></div>
+    </div>
+    <div class="ad-placeholder">[AdSense middle placeholder]</div>
+    <article>
+      <h2>About Remove Blank Pages</h2>
+      <p>Use this tool to clean up scanned documents or exported PDFs that contain empty sheets. The detection is heuristic and analyzes page content streams to decide which pages are likely blank. Running locally ensures documents never leave your device.</p>
+      <h3>Step-by-step guide</h3>
+      <ol><li>Upload your PDF.</li><li>Click "Remove Blank Pages".</li><li>Download the cleaned PDF.</li></ol>
+      <h3>FAQ</h3>
+      <div class="grid"><div class="faq-item"><strong>Is detection perfect?</strong><p>It's heuristic; review results before replacing originals.</p></div><div class="faq-item"><strong>Does it modify layout?</strong><p>No — only removes selected pages.</p></div><div class="faq-item"><strong>Is it free?</strong><p>Yes.</p></div><div class="faq-item"><strong>Files uploaded?</strong><p>No — processing is local.</p></div><div class="faq-item"><strong>Supported files?</strong><p>Standard PDFs.</p></div></div>
+      <h3>Related tools</h3>
+      <div class="grid"><a class="card" href="compress-pdf.html">Compress PDF</a><a class="card" href="split-pdf.html">Split PDF</a><a class="card" href="delete-pages.html">Delete Pages</a></div>
+    </article>
+    <div class="ad-placeholder">[AdSense bottom placeholder]</div>
+  </main>
+  <footer><div class="container footer-grid"><div><strong>ToolMetric</strong></div><div><a href="../legal/privacy-policy.html">Privacy</a></div></div></footer>
+  <script>
+    (function(){ const fileInput=document.getElementById('fileInput'), processBtn=document.getElementById('processBtn'), downloadBtn=document.getElementById('downloadBtn'); let out=null; processBtn.addEventListener('click',async()=>{ const f=fileInput.files[0]; if(!f){alert('Choose a PDF');return} try{ out = await window.ToolMetric.removeBlankPages(f); downloadBtn.style.display='inline-block'; }catch(e){console.error(e)} }); downloadBtn.addEventListener('click',()=>{ if(out) window.ToolMetric.downloadPDF(out, 'cleaned-'+(fileInput.files[0]?.name||'result.pdf')); else alert('No output'); }); })();
+  </script>
+</body>
+</html>

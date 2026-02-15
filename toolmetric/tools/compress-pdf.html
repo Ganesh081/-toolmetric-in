@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Compress PDF — ToolMetric</title>
+  <meta name="description" content="Compress PDF files client-side to reduce size. ToolMetric compresses PDFs without uploading files — private and fast.">
+  <link rel="stylesheet" href="../style.css">
+  <script src="../main.js" defer></script>
+</head>
+<body>
+  <header class="nav container">
+    <div class="logo">ToolMetric</div>
+    <nav class="nav-links">
+      <a href="../">Home</a>
+      <a href="../blog/index.html">Blog</a>
+      <a href="../about.html">About</a>
+      <a href="../contact.html" class="cta">Contact</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="ad-placeholder">[AdSense top placeholder]</div>
+
+    <h1>Compress PDF</h1>
+    <p class="muted">Compress PDF files client-side to reduce file size while keeping quality.</p>
+
+    <div class="tool-ui card">
+      <div class="dropzone" id="dropzone">
+        <p>Drag & drop your file here</p>
+        <div class="filename muted">No file selected</div>
+        <input type="file" id="fileInput">
+      </div>
+      <div class="controls">
+        <button class="btn" id="processBtn">Compress</button>
+        <button class="btn secondary" id="downloadBtn" style="display:none;">Download</button>
+      </div>
+      <div class="progress"><i style="width:0%"></i></div>
+    </div>
+
+    <div class="ad-placeholder">[AdSense middle placeholder]</div>
+
+    <article>
+      <h2>About Compress PDF</h2>
+      <p>Compress PDF is a tool designed to help you reduce the file size of your PDF documents without sending them to a server. The compression process runs entirely in your browser, preserving privacy and removing the need for uploads. The tool focuses primarily on streamlining PDF structure and optimizing embedded resources such as images by using client-side libraries capable of rewriting PDF object streams. When you compress a PDF with ToolMetric, we attempt to preserve visual quality while minimizing disk footprint. This makes PDFs easier to email, faster to open on mobile, and more friendly for archival storage. The method works best on PDFs that contain large images, unnecessary metadata, or inefficient object streams. Because everything happens locally, your content never leaves your device — we do not collect or store any files. The algorithm is conservative and aims to produce a functional PDF; in cases where advanced image recompression is needed for maximum reduction, results may vary depending on the original file composition. Users should keep a backup of the original file if they need highest fidelity. This client-side approach prioritizes security and immediacy: select the file, start compression, and download the result once the process completes. Compression typically completes quickly for small-to-medium files but may take longer for documents with many pages or large embedded assets. The interface shows progress and provides a single-click download once finished. ToolMetric's implementation is optimized for modern browsers and aims to balance speed, quality, and privacy for everyday use.</p>
+
+      <h3>Step-by-step guide</h3>
+      <ol>
+        <li>Select or drag & drop your PDF into the upload area.</li>
+        <li>Click the "Compress" button to start the in-browser optimization.</li>
+        <li>Watch the progress bar; when complete, click "Download" to save the compressed file.</li>
+      </ol>
+
+      <h3>FAQ</h3>
+      <div class="grid">
+        <div class="faq-item"><strong>Will my file be uploaded?</strong><p>No — compression runs entirely in your browser.</p></div>
+        <div class="faq-item"><strong>Is quality lost?</strong><p>We aim to preserve quality; some visual changes may occur when images are recompressed.</p></div>
+        <div class="faq-item"><strong>How fast is it?</strong><p>Depends on file size and device performance.</p></div>
+        <div class="faq-item"><strong>Any size limits?</strong><p>Large files can be slow; limits depend on browser memory.</p></div>
+        <div class="faq-item"><strong>Is it free?</strong><p>Yes — ToolMetric provides this tool free of charge.</p></div>
+      </div>
+
+      <h3>Related tools</h3>
+      <div class="grid">
+        <a class="card" href="merge-pdf.html">Merge PDF</a>
+        <a class="card" href="split-pdf.html">Split PDF</a>
+        <a class="card" href="remove-metadata.html">Remove Metadata</a>
+      </div>
+    </article>
+
+    <div class="ad-placeholder">[AdSense bottom placeholder]</div>
+  </main>
+
+  <footer>
+    <div class="container footer-grid"><div><strong>ToolMetric</strong></div><div><a href="../legal/privacy-policy.html">Privacy</a></div></div>
+  </footer>
+
+  <script>
+    (function(){
+      const fileInput = document.getElementById('fileInput'); const processBtn = document.getElementById('processBtn'); const downloadBtn = document.getElementById('downloadBtn'); let lastBytes=null;
+      processBtn.addEventListener('click', async ()=>{
+        const f = fileInput.files[0]; if(!f){alert('Choose a PDF first');return}
+        try{ const bytes = await window.ToolMetric.compressPDF(f); lastBytes = bytes; downloadBtn.style.display='inline-block'; }
+        catch(e){console.error(e)}
+      });
+      downloadBtn.addEventListener('click', ()=>{ if(lastBytes) window.ToolMetric.downloadPDF(lastBytes, 'compressed-'+(fileInput.files[0]?.name||'result.pdf')); else alert('No file ready'); });
+    })();
+  </script>
+</body>
+</html>

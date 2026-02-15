@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Add Page Numbers — ToolMetric</title>
+  <meta name="description" content="Add page numbers to a PDF file in the browser. Customize numbering and format.">
+  <link rel="stylesheet" href="../style.css">
+  <script src="../main.js" defer></script>
+</head>
+<body>
+  <header class="nav container"><div class="logo">ToolMetric</div><nav class="nav-links"><a href="../">Home</a><a href="../blog/index.html">Blog</a><a href="../about.html">About</a><a href="../contact.html" class="cta">Contact</a></nav></header>
+  <main class="container">
+    <div class="ad-placeholder">[AdSense top placeholder]</div>
+    <h1>Add Page Numbers</h1>
+    <p class="muted">Overlay page numbers onto each page of your PDF.</p>
+    <div class="tool-ui card">
+      <div class="dropzone" id="dropzone"><p>Drop a PDF</p><div class="filename muted">No file selected</div><input type="file" id="fileInput"></div>
+      <div class="controls"><input id="start" placeholder="Start at (1)" style="padding:8px;border-radius:8px;border:1px solid #e6e7ea"><button class="btn" id="processBtn">Add Numbers</button><button class="btn secondary" id="downloadBtn" style="display:none;">Download</button></div>
+      <div class="progress"><i style="width:0%"></i></div>
+    </div>
+    <div class="ad-placeholder">[AdSense middle placeholder]</div>
+    <article>
+      <h2>About Add Page Numbers</h2>
+      <p>Add page numbers to a PDF using a simple overlay. Numbers are drawn using standard fonts so they remain searchable.</p>
+      <h3>Step-by-step guide</h3>
+      <ol><li>Upload your PDF.</li><li>Enter a starting number (default 1).</li><li>Click "Add Numbers" and download.</li></ol>
+      <h3>FAQ</h3>
+      <div class="grid"><div class="faq-item"><strong>Can I set format?</strong><p>Basic numbering is supported; advanced formatting is not included.</p></div><div class="faq-item"><strong>Does it overwrite content?</strong><p>Numbers are drawn over existing content; avoid placing them over important text.</p></div><div class="faq-item"><strong>Files uploaded?</strong><p>No.</p></div><div class="faq-item"><strong>Free?</strong><p>Yes.</p></div><div class="faq-item"><strong>Supported browsers?</strong><p>Modern browsers.</p></div></div>
+      <h3>Related tools</h3>
+      <div class="grid"><a class="card" href="remove-page-numbers.html">Remove Page Numbers</a><a class="card" href="reorder-pages.html">Reorder Pages</a><a class="card" href="compress-pdf.html">Compress PDF</a></div>
+    </article>
+    <div class="ad-placeholder">[AdSense bottom placeholder]</div>
+  </main>
+  <footer><div class="container footer-grid"><div><strong>ToolMetric</strong></div><div><a href="../legal/privacy-policy.html">Privacy</a></div></div></footer>
+  <script>
+    (function(){ const f=document.getElementById('fileInput'), btn=document.getElementById('processBtn'), s=document.getElementById('start'), dl=document.getElementById('downloadBtn'); let out=null; btn.addEventListener('click',async()=>{ const file=f.files[0]; if(!file){alert('Choose a PDF');return} try{ const start = Number(s.value)||1; out = await window.ToolMetric.addPageNumbers(file,{start}); dl.style.display='inline-block'; }catch(e){console.error(e)} }); dl.addEventListener('click',()=>{ if(out) window.ToolMetric.downloadPDF(out, 'pagenums-'+(f.files[0]?.name||'result.pdf')); else alert('No output'); }); })();
+  </script>
+</body>
+</html>

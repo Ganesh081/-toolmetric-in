@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PDF to PNG — ToolMetric</title>
+  <meta name="description" content="Convert PDF pages to PNG images locally. Exports each page as a separate PNG.">
+  <link rel="stylesheet" href="../style.css">
+  <script src="../main.js" defer></script>
+</head>
+<body>
+  <header class="nav container"><div class="logo">ToolMetric</div><nav class="nav-links"><a href="../">Home</a><a href="../blog/index.html">Blog</a><a href="../about.html">About</a><a href="../contact.html" class="cta">Contact</a></nav></header>
+  <main class="container">
+    <div class="ad-placeholder">[AdSense top placeholder]</div>
+    <h1>PDF to PNG</h1>
+    <p class="muted">Render PDF pages to PNG images using high-quality browser rendering.</p>
+    <div class="tool-ui card">
+      <div class="dropzone" id="dropzone"><p>Drop a PDF</p><div class="filename muted">No file selected</div><input type="file" id="fileInput"></div>
+      <div class="controls"><button class="btn" id="processBtn">Convert</button></div>
+      <div class="progress"><i style="width:0%"></i></div>
+    </div>
+    <div class="ad-placeholder">[AdSense middle placeholder]</div>
+    <article>
+      <h2>About PDF to PNG</h2>
+      <p>Export every page of a PDF as a separate PNG image. The images are rendered at a high scale factor for clarity. All rendering is performed locally in your browser.</p>
+      <h3>Step-by-step guide</h3>
+      <ol><li>Upload your PDF.</li><li>Click "Convert" to render pages.</li><li>Each page will download as a PNG file.</li></ol>
+      <h3>FAQ</h3>
+      <div class="grid"><div class="faq-item"><strong>Can I pick resolution?</strong><p>Not currently; we use a high default scale for good quality.</p></div><div class="faq-item"><strong>Large PDFs?</strong><p>May be slow and memory-intensive.</p></div><div class="faq-item"><strong>Files uploaded?</strong><p>No.</p></div><div class="faq-item"><strong>Free?</strong><p>Yes.</p></div><div class="faq-item"><strong>Supported browsers?</strong><p>Modern browsers.</p></div></div>
+      <h3>Related tools</h3>
+      <div class="grid"><a class="card" href="pdf-to-jpg.html">PDF to JPG</a><a class="card" href="extract-images.html">Extract Images</a><a class="card" href="merge-pdf.html">Merge PDF</a></div>
+    </article>
+    <div class="ad-placeholder">[AdSense bottom placeholder]</div>
+  </main>
+  <footer><div class="container footer-grid"><div><strong>ToolMetric</strong></div><div><a href="../legal/privacy-policy.html">Privacy</a></div></div></footer>
+  <script>
+    (function(){ const f=document.getElementById('fileInput'), btn=document.getElementById('processBtn'); btn.addEventListener('click',async()=>{ const file=f.files[0]; if(!file){alert('Choose a PDF');return} try{ await window.ToolMetric.pdfToPNG(file); }catch(e){console.error(e)} }); })();
+  </script>
+</body>
+</html>

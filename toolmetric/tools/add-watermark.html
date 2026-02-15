@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Add Watermark — ToolMetric</title>
+  <meta name="description" content="Add a text watermark to your PDF pages in the browser. Customize watermark text.">
+  <link rel="stylesheet" href="../style.css">
+  <script src="../main.js" defer></script>
+</head>
+<body>
+  <header class="nav container"><div class="logo">ToolMetric</div><nav class="nav-links"><a href="../">Home</a><a href="../blog/index.html">Blog</a><a href="../about.html">About</a><a href="../contact.html" class="cta">Contact</a></nav></header>
+  <main class="container">
+    <div class="ad-placeholder">[AdSense top placeholder]</div>
+    <h1>Add Watermark</h1>
+    <p class="muted">Place a semi-transparent text watermark on every page of your PDF.</p>
+    <div class="tool-ui card">
+      <div class="dropzone" id="dropzone"><p>Drop a PDF</p><div class="filename muted">No file selected</div><input type="file" id="fileInput"></div>
+      <div class="controls"><input id="wmtext" placeholder="Watermark text" style="padding:8px;border-radius:8px;border:1px solid #e6e7ea"><button class="btn" id="processBtn">Add Watermark</button><button class="btn secondary" id="downloadBtn" style="display:none;">Download</button></div>
+      <div class="progress"><i style="width:0%"></i></div>
+    </div>
+    <div class="ad-placeholder">[AdSense middle placeholder]</div>
+    <article>
+      <h2>About Add Watermark</h2>
+      <p>Add a faint watermark to help protect intellectual property or mark drafts. The watermark is drawn as text overlay on each page; adjust the text to suit your needs.</p>
+      <h3>Step-by-step guide</h3>
+      <ol><li>Upload your PDF.</li><li>Enter watermark text.</li><li>Click "Add Watermark" and download.</li></ol>
+      <h3>FAQ</h3>
+      <div class="grid"><div class="faq-item"><strong>Can I change opacity?</strong><p>Opacity is fixed for now but is subtle and unobtrusive.</p></div><div class="faq-item"><strong>Does it alter text?</strong><p>No — watermark is an overlay.</p></div><div class="faq-item"><strong>Files uploaded?</strong><p>No.</p></div><div class="faq-item"><strong>Free?</strong><p>Yes.</p></div><div class="faq-item"><strong>Supported browsers?</strong><p>Modern browsers.</p></div></div>
+      <h3>Related tools</h3>
+      <div class="grid"><a class="card" href="remove-metadata.html">Remove Metadata</a><a class="card" href="add-page-numbers.html">Add Page Numbers</a><a class="card" href="compress-pdf.html">Compress PDF</a></div>
+    </article>
+    <div class="ad-placeholder">[AdSense bottom placeholder]</div>
+  </main>
+  <footer><div class="container footer-grid"><div><strong>ToolMetric</strong></div><div><a href="../legal/privacy-policy.html">Privacy</a></div></div></footer>
+  <script>
+    (function(){ const f=document.getElementById('fileInput'), txt=document.getElementById('wmtext'), btn=document.getElementById('processBtn'), dl=document.getElementById('downloadBtn'); let out=null; btn.addEventListener('click',async()=>{ const file=f.files[0]; if(!file){alert('Choose a PDF');return} try{ out = await window.ToolMetric.addWatermark(file, txt.value||'ToolMetric'); dl.style.display='inline-block'; }catch(e){console.error(e)} }); dl.addEventListener('click',()=>{ if(out) window.ToolMetric.downloadPDF(out, 'watermarked-'+(f.files[0]?.name||'result.pdf')); else alert('No output'); }); })();
+  </script>
+</body>
+</html>

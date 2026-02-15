@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Word to PDF — ToolMetric</title>
+  <meta name="description" content="Convert simple Word (.doc/.docx) text files to PDF entirely in the browser.">
+  <link rel="stylesheet" href="../style.css">
+  <script src="../main.js" defer></script>
+</head>
+<body>
+  <header class="nav container"><div class="logo">ToolMetric</div><nav class="nav-links"><a href="../">Home</a><a href="../blog/index.html">Blog</a><a href="../about.html">About</a><a href="../contact.html" class="cta">Contact</a></nav></header>
+  <main class="container">
+    <div class="ad-placeholder">[AdSense top placeholder]</div>
+    <h1>Word to PDF</h1>
+    <p class="muted">Convert simple text-based Word documents to PDF directly in the browser.</p>
+    <div class="tool-ui card">
+      <div class="dropzone" id="dropzone"><p>Drop a .doc or .txt file</p><div class="filename muted">No file selected</div><input type="file" id="fileInput"></div>
+      <div class="controls"><button class="btn" id="processBtn">Convert</button><button class="btn secondary" id="downloadBtn" style="display:none;">Download</button></div>
+      <div class="progress"><i style="width:0%"></i></div>
+    </div>
+    <div class="ad-placeholder">[AdSense middle placeholder]</div>
+    <article>
+      <h2>About Word to PDF</h2>
+      <p>This tool reads plain text from simple Word or text files and lays it out into a PDF using client-side PDF generation. Complex .docx features such as tables, images, and advanced styles may not be preserved in this lightweight conversion. For more involved conversions, use dedicated desktop tools. The benefit of ToolMetric's approach is privacy and speed — conversion is performed locally and is free to use.</p>
+      <h3>Step-by-step guide</h3>
+      <ol><li>Upload your .doc or .txt file.</li><li>Click "Convert" to generate a PDF.</li><li>Download and open the PDF.</li></ol>
+      <h3>FAQ</h3>
+      <div class="grid"><div class="faq-item"><strong>Does it support .docx?</strong><p>It supports plain .doc/.docx text extraction; complex files may not fully convert.</p></div><div class="faq-item"><strong>Are images preserved?</strong><p>No for this lightweight converter.</p></div><div class="faq-item"><strong>Files uploaded?</strong><p>No.</p></div><div class="faq-item"><strong>Free?</strong><p>Yes.</p></div><div class="faq-item"><strong>Supported browsers?</strong><p>Modern browsers.</p></div></div>
+      <h3>Related tools</h3>
+      <div class="grid"><a class="card" href="pdf-to-word.html">PDF to Word</a><a class="card" href="compress-pdf.html">Compress PDF</a><a class="card" href="remove-metadata.html">Remove Metadata</a></div>
+    </article>
+    <div class="ad-placeholder">[AdSense bottom placeholder]</div>
+  </main>
+  <footer><div class="container footer-grid"><div><strong>ToolMetric</strong></div><div><a href="../legal/privacy-policy.html">Privacy</a></div></div></footer>
+  <script>
+    (function(){ const f=document.getElementById('fileInput'), btn=document.getElementById('processBtn'), dl=document.getElementById('downloadBtn'); let out=null; btn.addEventListener('click',async()=>{ const file=f.files[0]; if(!file){alert('Choose a file');return} try{ out = await window.ToolMetric.wordToPDF(file); dl.style.display='inline-block'; }catch(e){console.error(e)} }); dl.addEventListener('click',()=>{ if(out) window.ToolMetric.downloadPDF(out, 'converted-'+(f.files[0]?.name||'result.pdf')); else alert('No output'); }); })();
+  </script>
+</body>
+</html>

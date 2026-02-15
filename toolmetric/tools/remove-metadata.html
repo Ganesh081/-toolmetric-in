@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Remove Metadata — ToolMetric</title>
+  <meta name="description" content="Strip metadata from PDF files (author, title, dates) locally in your browser to protect privacy.">
+  <link rel="stylesheet" href="../style.css">
+  <script src="../main.js" defer></script>
+</head>
+<body>
+  <header class="nav container"><div class="logo">ToolMetric</div><nav class="nav-links"><a href="../">Home</a><a href="../blog/index.html">Blog</a><a href="../about.html">About</a><a href="../contact.html" class="cta">Contact</a></nav></header>
+  <main class="container">
+    <div class="ad-placeholder">[AdSense top placeholder]</div>
+    <h1>Remove Metadata</h1>
+    <p class="muted">Strip metadata like author, title and creation date to improve privacy.</p>
+    <div class="tool-ui card">
+      <div class="dropzone" id="dropzone"><p>Drop a PDF</p><div class="filename muted">No file selected</div><input type="file" id="fileInput"></div>
+      <div class="controls"><button class="btn" id="processBtn">Remove Metadata</button><button class="btn secondary" id="downloadBtn" style="display:none;">Download</button></div>
+      <div class="progress"><i style="width:0%"></i></div>
+    </div>
+    <div class="ad-placeholder">[AdSense middle placeholder]</div>
+    <article>
+      <h2>About Remove Metadata</h2>
+      <p>PDF metadata can contain identifying information. This tool creates a new PDF that copies visible pages but does not copy the original document's metadata, providing a privacy-focused result. Everything runs in your browser so no data leaves your device.</p>
+      <h3>Step-by-step guide</h3>
+      <ol><li>Upload a PDF.</li><li>Click "Remove Metadata" to generate a stripped copy.</li><li>Download the resulting file.</li></ol>
+      <h3>FAQ</h3>
+      <div class="grid"><div class="faq-item"><strong>What metadata is removed?</strong><p>Common fields like author, title, and creation dates are not copied when creating the new document.</p></div><div class="faq-item"><strong>Is content changed?</strong><p>Visible content is preserved; only metadata is removed.</p></div><div class="faq-item"><strong>Files uploaded?</strong><p>No.</p></div><div class="faq-item"><strong>Free?</strong><p>Yes.</p></div><div class="faq-item"><strong>Supported browsers?</strong><p>Modern browsers.</p></div></div>
+      <h3>Related tools</h3>
+      <div class="grid"><a class="card" href="remove-page-numbers.html">Remove Page Numbers</a><a class="card" href="compress-pdf.html">Compress PDF</a><a class="card" href="add-watermark.html">Add Watermark</a></div>
+    </article>
+    <div class="ad-placeholder">[AdSense bottom placeholder]</div>
+  </main>
+  <footer><div class="container footer-grid"><div><strong>ToolMetric</strong></div><div><a href="../legal/privacy-policy.html">Privacy</a></div></div></footer>
+  <script>
+    (function(){ const f=document.getElementById('fileInput'), btn=document.getElementById('processBtn'), dl=document.getElementById('downloadBtn'); let out=null; btn.addEventListener('click',async()=>{ const file=f.files[0]; if(!file){alert('Choose a file');return} try{ out = await window.ToolMetric.removeMetadata(file); dl.style.display='inline-block'; }catch(e){console.error(e)} }); dl.addEventListener('click',()=>{ if(out) window.ToolMetric.downloadPDF(out, 'nometa-'+(f.files[0]?.name||'result.pdf')); else alert('No output'); }); })();
+  </script>
+</body>
+</html>

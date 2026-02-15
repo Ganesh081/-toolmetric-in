@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Merge PDF — ToolMetric</title>
+  <meta name="description" content="Merge multiple PDF files into one document directly in the browser. Private and fast.">
+  <link rel="stylesheet" href="../style.css">
+  <script src="../main.js" defer></script>
+</head>
+<body>
+  <header class="nav container"><div class="logo">ToolMetric</div><nav class="nav-links"><a href="../">Home</a><a href="../blog/index.html">Blog</a><a href="../about.html">About</a><a href="../contact.html" class="cta">Contact</a></nav></header>
+  <main class="container">
+    <div class="ad-placeholder">[AdSense top placeholder]</div>
+    <h1>Merge PDF</h1>
+    <p class="muted">Combine several PDF files into a single document locally in your browser.</p>
+    <div class="tool-ui card">
+      <div class="dropzone" id="dropzone"><p>Drag & drop multiple PDFs</p><div class="filename muted">No files selected</div><input type="file" id="fileInput" multiple></div>
+      <div class="controls"><button class="btn" id="processBtn">Merge</button><button class="btn secondary" id="downloadBtn" style="display:none;">Download</button></div>
+      <div class="progress"><i style="width:0%"></i></div>
+    </div>
+    <div class="ad-placeholder">[AdSense middle placeholder]</div>
+    <article>
+      <h2>About Merge PDF</h2>
+      <p>Merge PDF is designed to concatenate multiple PDFs into a single file preserving page order. It's useful when combining reports, receipts, or scanned pages into one document. The merging process happens entirely on your device to protect privacy.</p>
+      <h3>Step-by-step guide</h3>
+      <ol><li>Upload the PDFs in the order you want them merged.</li><li>Click "Merge" to combine them.</li><li>Download the merged PDF file.</li></ol>
+      <h3>FAQ</h3>
+      <div class="grid"><div class="faq-item"><strong>Can I change order?</strong><p>Upload in desired order; advanced reorder available on Reorder Pages.</p></div><div class="faq-item"><strong>Large files?</strong><p>May take longer and use more memory.</p></div><div class="faq-item"><strong>Are files uploaded?</strong><p>No.</p></div><div class="faq-item"><strong>Free?</strong><p>Yes.</p></div><div class="faq-item"><strong>Supported browsers?</strong><p>Modern browsers.</p></div></div>
+      <h3>Related tools</h3>
+      <div class="grid"><a class="card" href="split-pdf.html">Split PDF</a><a class="card" href="reorder-pages.html">Reorder Pages</a><a class="card" href="compress-pdf.html">Compress PDF</a></div>
+    </article>
+    <div class="ad-placeholder">[AdSense bottom placeholder]</div>
+  </main>
+  <footer><div class="container footer-grid"><div><strong>ToolMetric</strong></div><div><a href="../legal/privacy-policy.html">Privacy</a></div></div></footer>
+  <script>
+    (function(){ const fi=document.getElementById('fileInput'), btn=document.getElementById('processBtn'), dl=document.getElementById('downloadBtn'); let out=null; btn.addEventListener('click',async()=>{ const files = Array.from(fi.files); if(!files.length){alert('Choose files');return} try{ out = await window.ToolMetric.mergePDFs(files); dl.style.display='inline-block'; }catch(e){console.error(e)} }); dl.addEventListener('click',()=>{ if(out) window.ToolMetric.downloadPDF(out,'merged.pdf'); else alert('No output'); }); })();
+  </script>
+</body>
+</html>

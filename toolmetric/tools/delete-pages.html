@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Delete Pages — ToolMetric</title>
+  <meta name="description" content="Delete specific pages from a PDF using a client-side editor.">
+  <link rel="stylesheet" href="../style.css">
+  <script src="../main.js" defer></script>
+</head>
+<body>
+  <header class="nav container"><div class="logo">ToolMetric</div><nav class="nav-links"><a href="../">Home</a><a href="../blog/index.html">Blog</a><a href="../about.html">About</a><a href="../contact.html" class="cta">Contact</a></nav></header>
+  <main class="container">
+    <div class="ad-placeholder">[AdSense top placeholder]</div>
+    <h1>Delete Pages</h1>
+    <p class="muted">Remove unwanted pages by listing them (e.g. 2,5) and creating a new PDF without those pages.</p>
+    <div class="tool-ui card">
+      <div class="dropzone" id="dropzone"><p>Drop a PDF</p><div class="filename muted">No file selected</div><input type="file" id="fileInput"></div>
+      <div class="controls"><input id="pages" placeholder="Pages to delete e.g. 2,5" style="padding:8px;border-radius:8px;border:1px solid #e6e7ea"><button class="btn" id="processBtn">Delete</button><button class="btn secondary" id="downloadBtn" style="display:none;">Download</button></div>
+      <div class="progress"><i style="width:0%"></i></div>
+    </div>
+    <div class="ad-placeholder">[AdSense middle placeholder]</div>
+    <article>
+      <h2>About Delete Pages</h2>
+      <p>Delete Pages helps you remove confidential or irrelevant pages. Enter comma-separated page numbers to delete; the remaining pages will be saved in order.</p>
+      <h3>Step-by-step guide</h3>
+      <ol><li>Upload the PDF.</li><li>Enter pages to delete.</li><li>Click "Delete" and download the result.</li></ol>
+      <h3>FAQ</h3>
+      <div class="grid"><div class="faq-item"><strong>Are page numbers 1-based?</strong><p>Yes — use 1 for the first page.</p></div><div class="faq-item"><strong>Can I undo?</strong><p>No — keep a backup of the original file.</p></div><div class="faq-item"><strong>Files uploaded?</strong><p>No.</p></div><div class="faq-item"><strong>Free?</strong><p>Yes.</p></div><div class="faq-item"><strong>Supported browsers?</strong><p>Modern browsers.</p></div></div>
+      <h3>Related tools</h3>
+      <div class="grid"><a class="card" href="split-pdf.html">Split PDF</a><a class="card" href="extract-first-page.html">Extract First Page</a><a class="card" href="extract-last-page.html">Extract Last Page</a></div>
+    </article>
+    <div class="ad-placeholder">[AdSense bottom placeholder]</div>
+  </main>
+  <footer><div class="container footer-grid"><div><strong>ToolMetric</strong></div><div><a href="../legal/privacy-policy.html">Privacy</a></div></div></footer>
+  <script>
+    (function(){ const f=document.getElementById('fileInput'), btn=document.getElementById('processBtn'), p=document.getElementById('pages'), dl=document.getElementById('downloadBtn'); let out=null; btn.addEventListener('click',async()=>{ const file=f.files[0]; if(!file){alert('Choose file');return} try{ const pages = p.value.split(',').map(Number); out = await window.ToolMetric.deletePages(file,pages); dl.style.display='inline-block'; }catch(e){console.error(e)} }); dl.addEventListener('click',()=>{ if(out) window.ToolMetric.downloadPDF(out,'deleted-'+(f.files[0]?.name||'result.pdf')); else alert('No output'); }); })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Rotate PDF — ToolMetric</title>
+  <meta name="description" content="Rotate PDF pages by 90, 180 or 270 degrees in your browser. No uploads.">
+  <link rel="stylesheet" href="../style.css">
+  <script src="../main.js" defer></script>
+</head>
+<body>
+  <header class="nav container"><div class="logo">ToolMetric</div><nav class="nav-links"><a href="../">Home</a><a href="../blog/index.html">Blog</a><a href="../about.html">About</a><a href="../contact.html" class="cta">Contact</a></nav></header>
+  <main class="container">
+    <div class="ad-placeholder">[AdSense top placeholder]</div>
+    <h1>Rotate PDF</h1>
+    <p class="muted">Rotate all pages in a PDF by a chosen angle.</p>
+    <div class="tool-ui card">
+      <div class="dropzone" id="dropzone"><p>Drop a PDF</p><div class="filename muted">No file selected</div><input type="file" id="fileInput"></div>
+      <div class="controls"><select id="angle" style="padding:8px;border-radius:8px;border:1px solid #e6e7ea"><option value="90">90</option><option value="180">180</option><option value="270">270</option></select><button class="btn" id="processBtn">Rotate</button><button class="btn secondary" id="downloadBtn" style="display:none;">Download</button></div>
+      <div class="progress"><i style="width:0%"></i></div>
+    </div>
+    <div class="ad-placeholder">[AdSense middle placeholder]</div>
+    <article>
+      <h2>About Rotate PDF</h2>
+      <p>Rotate PDF changes the orientation of every page in the document. Useful for scanned documents or when pages are upside down. The operation is performed locally so your data stays private.</p>
+      <h3>Step-by-step guide</h3>
+      <ol><li>Upload a PDF.</li><li>Select rotation angle.</li><li>Click "Rotate" and download.</li></ol>
+      <h3>FAQ</h3>
+      <div class="grid"><div class="faq-item"><strong>Does it rotate specific pages?</strong><p>Current tool rotates all pages; use Split/Reorder for advanced edits.</p></div><div class="faq-item"><strong>Is it free?</strong><p>Yes.</p></div><div class="faq-item"><strong>Are files uploaded?</strong><p>No.</p></div><div class="faq-item"><strong>Supported browsers?</strong><p>Modern browsers.</p></div><div class="faq-item"><strong>Any limitations?</strong><p>Large files may be slower.</p></div></div>
+      <h3>Related tools</h3>
+      <div class="grid"><a class="card" href="split-pdf.html">Split PDF</a><a class="card" href="reorder-pages.html">Reorder Pages</a><a class="card" href="compress-pdf.html">Compress PDF</a></div>
+    </article>
+    <div class="ad-placeholder">[AdSense bottom placeholder]</div>
+  </main>
+  <footer><div class="container footer-grid"><div><strong>ToolMetric</strong></div><div><a href="../legal/privacy-policy.html">Privacy</a></div></div></footer>
+  <script>
+    (function(){ const f=document.getElementById('fileInput'), btn=document.getElementById('processBtn'), ang=document.getElementById('angle'), dl=document.getElementById('downloadBtn'); let out=null; btn.addEventListener('click',async()=>{ const file=f.files[0]; if(!file){alert('Choose a file');return} try{ out = await window.ToolMetric.rotatePDF(file, Number(ang.value)); dl.style.display='inline-block'; }catch(e){console.error(e)} }); dl.addEventListener('click',()=>{ if(out) window.ToolMetric.downloadPDF(out, 'rotated-'+(f.files[0]?.name||'result.pdf')); else alert('No output'); }); })();
+  </script>
+</body>
+</html>

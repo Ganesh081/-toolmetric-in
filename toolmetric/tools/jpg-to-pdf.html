@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>JPG to PDF — ToolMetric</title>
+  <meta name="description" content="Convert JPG/PNG images to PDF in your browser. Create single-page PDFs quickly.">
+  <link rel="stylesheet" href="../style.css">
+  <script src="../main.js" defer></script>
+</head>
+<body>
+  <header class="nav container"><div class="logo">ToolMetric</div><nav class="nav-links"><a href="../">Home</a><a href="../blog/index.html">Blog</a><a href="../about.html">About</a><a href="../contact.html" class="cta">Contact</a></nav></header>
+  <main class="container">
+    <div class="ad-placeholder">[AdSense top placeholder]</div>
+    <h1>JPG to PDF</h1>
+    <p class="muted">Convert a JPG or PNG image into a single-page PDF locally in your browser.</p>
+    <div class="tool-ui card">
+      <div class="dropzone" id="dropzone"><p>Drop an image</p><div class="filename muted">No file selected</div><input type="file" id="fileInput" accept="image/*"></div>
+      <div class="controls"><button class="btn" id="processBtn">Convert</button><button class="btn secondary" id="downloadBtn" style="display:none;">Download</button></div>
+      <div class="progress"><i style="width:0%"></i></div>
+    </div>
+    <div class="ad-placeholder">[AdSense middle placeholder]</div>
+    <article>
+      <h2>About JPG to PDF</h2>
+      <p>This utility embeds an uploaded image into a PDF page sized to the image dimensions. It's ideal for converting photos or scanned images into shareable PDF files.</p>
+      <h3>Step-by-step guide</h3>
+      <ol><li>Choose a JPG or PNG image.</li><li>Click "Convert" to embed it into a PDF.</li><li>Download the resulting PDF file.</li></ol>
+      <h3>FAQ</h3>
+      <div class="grid"><div class="faq-item"><strong>Can I convert multiple images?</strong><p>This tool creates a single-page PDF from one image; use other tools for multi-page conversions.</p></div><div class="faq-item"><strong>Quality?</strong><p>Image quality is preserved.</p></div><div class="faq-item"><strong>Files uploaded?</strong><p>No.</p></div><div class="faq-item"><strong>Free?</strong><p>Yes.</p></div><div class="faq-item"><strong>Supported browsers?</strong><p>Modern browsers.</p></div></div>
+      <h3>Related tools</h3>
+      <div class="grid"><a class="card" href="pdf-to-jpg.html">PDF to JPG</a><a class="card" href="pdf-to-png.html">PDF to PNG</a><a class="card" href="merge-pdf.html">Merge PDF</a></div>
+    </article>
+    <div class="ad-placeholder">[AdSense bottom placeholder]</div>
+  </main>
+  <footer><div class="container footer-grid"><div><strong>ToolMetric</strong></div><div><a href="../legal/privacy-policy.html">Privacy</a></div></div></footer>
+  <script>
+    (function(){ const f=document.getElementById('fileInput'), btn=document.getElementById('processBtn'), dl=document.getElementById('downloadBtn'); let out=null; btn.addEventListener('click',async()=>{ const file=f.files[0]; if(!file){alert('Choose an image');return} try{ out = await window.ToolMetric.jpgToPDF(file); dl.style.display='inline-block'; }catch(e){console.error(e)} }); dl.addEventListener('click',()=>{ if(out) window.ToolMetric.downloadPDF(out, 'converted-'+(f.files[0]?.name||'result.pdf')); else alert('No output'); }); })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Crop PDF — ToolMetric</title>
+  <meta name="description" content="Crop white margins from PDF pages in the browser. Adjust margins (points) and crop pages.">
+  <link rel="stylesheet" href="../style.css">
+  <script src="../main.js" defer></script>
+</head>
+<body>
+  <header class="nav container"><div class="logo">ToolMetric</div><nav class="nav-links"><a href="../">Home</a><a href="../blog/index.html">Blog</a><a href="../about.html">About</a><a href="../contact.html" class="cta">Contact</a></nav></header>
+  <main class="container">
+    <div class="ad-placeholder">[AdSense top placeholder]</div>
+    <h1>Crop PDF</h1>
+    <p class="muted">Crop white space or unwanted edges by specifying margins in points.</p>
+    <div class="tool-ui card">
+      <div class="dropzone" id="dropzone"><p>Drop a PDF</p><div class="filename muted">No file selected</div><input type="file" id="fileInput"></div>
+      <div class="controls"><input id="margins" placeholder="top,right,bottom,left (e.g. 10,10,10,10)" style="padding:8px;border-radius:8px;border:1px solid #e6e7ea"><button class="btn" id="processBtn">Crop</button><button class="btn secondary" id="downloadBtn" style="display:none;">Download</button></div>
+      <div class="progress"><i style="width:0%"></i></div>
+    </div>
+    <div class="ad-placeholder">[AdSense middle placeholder]</div>
+    <article>
+      <h2>About Crop PDF</h2>
+      <p>Crop PDF lets you remove margins or whitespace by setting margins in points (1 point = 1/72 inch). The operation modifies the media box of each page to the requested area.</p>
+      <h3>Step-by-step guide</h3>
+      <ol><li>Upload your PDF.</li><li>Enter margins as <code>top,right,bottom,left</code>.</li><li>Click "Crop" and download.</li></ol>
+      <h3>FAQ</h3>
+      <div class="grid"><div class="faq-item"><strong>How do I pick margins?</strong><p>Start small and inspect results; you can repeat until satisfied.</p></div><div class="faq-item"><strong>Does it scale content?</strong><p>No — it changes page crop area only.</p></div><div class="faq-item"><strong>Files uploaded?</strong><p>No.</p></div><div class="faq-item"><strong>Free?</strong><p>Yes.</p></div><div class="faq-item"><strong>Supported browsers?</strong><p>Modern browsers.</p></div></div>
+      <h3>Related tools</h3>
+      <div class="grid"><a class="card" href="extract-images.html">Extract Images</a><a class="card" href="remove-blank-pages.html">Remove Blank Pages</a><a class="card" href="compress-pdf.html">Compress PDF</a></div>
+    </article>
+    <div class="ad-placeholder">[AdSense bottom placeholder]</div>
+  </main>
+  <footer><div class="container footer-grid"><div><strong>ToolMetric</strong></div><div><a href="../legal/privacy-policy.html">Privacy</a></div></div></footer>
+  <script>
+    (function(){ const f=document.getElementById('fileInput'), btn=document.getElementById('processBtn'), m=document.getElementById('margins'), dl=document.getElementById('downloadBtn'); let out=null; btn.addEventListener('click',async()=>{ const file=f.files[0]; if(!file){alert('Choose a file');return} try{ const arr = (m.value||'0,0,0,0').split(',').map(Number); const margins={top:arr[0]||0,right:arr[1]||0,bottom:arr[2]||0,left:arr[3]||0}; out = await window.ToolMetric.cropPDF(file,margins); dl.style.display='inline-block'; }catch(e){console.error(e)} }); dl.addEventListener('click',()=>{ if(out) window.ToolMetric.downloadPDF(out, 'cropped-'+(f.files[0]?.name||'result.pdf')); else alert('No output'); }); })();
+  </script>
+</body>
+</html>

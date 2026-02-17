@@ -8,7 +8,7 @@
 const PDF_LIB_URL = 'https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js';
 const PDFJS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.min.js';
 const PDFJS_WORKER_URL = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.worker.min.js';
-const DOCX_URL = 'https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.js';
+const JSZIP_URL = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
 let PDFLibLoaded = false;
 async function ensurePdfLib(){
   if(window.PDFLib) { PDFLibLoaded = true; return; }
@@ -33,18 +33,11 @@ async function ensurePdfJs(){
 }
 
 async function ensureDocx(){
-  if(window.docx && window.docx.Document) return;
+  if(window.JSZip) return;
   await new Promise((res,rej)=>{
     const s=document.createElement('script');
-    s.src=DOCX_URL;
-    s.onload=()=>{
-      // docx UMD build exposes as window.docx
-      if(window.docx && window.docx.Document) res();
-      else {
-        console.warn('docx library loaded but Document not found, trying alternative');
-        res(); // continue anyway
-      }
-    };
+    s.src=JSZIP_URL;
+    s.onload=res;
     s.onerror=rej;
     document.head.appendChild(s);
   });
@@ -159,7 +152,7 @@ async function mergePDFs(files){
   }catch(err){handleError(err);throw err}
 }
 
-/* 6. pdfToWord - extract text and create .docx file */
+/* 6. pdfToWord - extract text and create proper .docx file */
 async function pdfToWord(file){
   try{validatePDF(file); showProgress(10);
     // Extract text using PDF.js
@@ -167,77 +160,71 @@ async function pdfToWord(file){
     for(let p=1;p<=loading.numPages;p++){ const page = await loading.getPage(p); const content = await page.getTextContent(); const pageText = content.items.map(i=>i.str).join(' '); pages.push(pageText); showProgress(10+50*p/loading.numPages); }
     showProgress(60);
     
-    // Try to use docx library if available, otherwise create basic docx
-    let blob;
-    try{
-      await ensureDocx();
-      if(window.docx && window.docx.Document && window.docx.Packer){
-        const { Document, Packer, Paragraph, PageBreak } = window.docx;
-        const paragraphs = [];
-        for(let i=0;i<pages.length;i++){
-          if(i>0) paragraphs.push(new Paragraph({text:''}));
-          paragraphs.push(new Paragraph({text:pages[i]||'(Page '+(i+1)+' is empty)'}));
-          if(i<pages.length-1) paragraphs.push(new PageBreak());
-        }
-        const doc = new Document({sections:[{children:paragraphs}]});
-        blob = await Packer.toBlob(doc);
-      }else{
-        throw new Error('docx library not available');
-      }
-    }catch(libErr){
-      console.warn('docx library failed, creating basic Word format', libErr);
-      // Fallback: create a basic .docx format manually
-      blob = createBasicDocx(pages);
-    }
+    // Create proper .docx using JSZip
+    await ensureDocx();
+    const blob = await createProperDocx(pages);
     
     const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=file.name.replace(/\.pdf$/i,'')+'.docx'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),5000); showProgress(100); return blob;
   }catch(err){handleError(err);throw err}
 }
 
-// Helper: Create a basic valid .docx file (ZIP with XML content)
-function createBasicDocx(pages){
-  // A minimal valid .docx is a ZIP containing specific XML files
-  // Using a simple approach: base64 encode a minimal docx template with injected text
+// Create a proper .docx file using JSZip
+async function createProperDocx(pages){
+  const JSZip = window.JSZip;
+  if(!JSZip) throw new Error('JSZip library not available');
+  
+  const zip = new JSZip();
   const textContent = pages.join('\n\n');
-  const xmlContent = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  
+  // Create [Content_Types].xml
+  const contentTypes = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+</Types>`;
+  
+  // Create _rels/.rels
+  const rels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>`;
+  
+  // Create word/document.xml with escaped text
+  const escapedText = escapeXmlForDocx(textContent);
+  const document = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
   <w:body>
-    <w:p><w:r><w:t>${escapeXml(textContent)}</w:t></w:r></w:p>
+    <w:p>
+      <w:pPr>
+        <w:pStyle w:val="Normal"/>
+      </w:pPr>
+      <w:r>
+        <w:t>${escapedText}</w:t>
+      </w:r>
+    </w:p>
   </w:body>
 </w:document>`;
   
-  // For simplicity, we'll create a data URL approach - OR use JSZip if available
-  // Since we can't easily create ZIP in vanilla JS, create a text file with xml wrapper
-  // This won't be perfect but will be more compatible than plain text
+  // Add files to ZIP
+  zip.file('[Content_Types].xml', contentTypes);
+  zip.folder('_rels').file('.rels', rels);
+  zip.folder('word').file('document.xml', document);
   
-  // Fallback: return as RTF format (compatible with Word)
-  const rtfContent = `{\\rtf1\\ansi\\ansicpg1252\\cocoartf2131
-\\cocoatextscaling0{\\fonttbl\\f0\\fswiss Helvetica;}
-{\\colortbl;\\red255\\green255\\blue255;}
-{\\*\\expandedcolortbl;;}
-\\margl1440\\margr1440\\vieww11900\\viewh8605\\viewkind0
-\\pard\\tx720\\tx1440\\tx2160\\tx2880\\tx3600\\tx4320\\tx5040\\tx5760\\tx6480\\tx7200\\tx7920\\tx8640\\pardirnatural\\partightenfactor100
-
-\\fs20 ${escapeRtf(textContent)}}`;
-  
-  return new Blob([rtfContent], {type: 'application/rtf'});
+  // Generate blob
+  const blob = await zip.generateAsync({type:'blob'});
+  return blob;
 }
 
-function escapeXml(str){
+function escapeXmlForDocx(str){
   return String(str)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
-    .replace(/'/g, '&apos;');
-}
-
-function escapeRtf(str){
-  return String(str)
-    .replace(/\\/g, '\\\\')
-    .replace(/{/g, '\\{')
-    .replace(/}/g, '\\}')
-    .replace(/[\r\n]/g, '\\par ');
+    .replace(/'/g, '&apos;')
+    // Word also needs line breaks as separate paragraphs or line breaks
+    .split('\n').join('</w:t></w:r></w:p><w:p><w:r><w:t>');
 }
 
 /* 7. wordToPDF - simple demo: wrap text into a PDF */

@@ -5,101 +5,36 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Compress PDF to 200KB — ToolMetric</title>
   <meta name="description" content="Compress your PDF to a smaller file size directly in your browser using ToolMetric's client-side tools. No upload required." />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/style.css">
-  <script defer src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
-  <script defer src="/main.js"></script>
+  <link rel="stylesheet" href="../style.css">
+  <script defer src="../main.js"></script>
 </head>
 <body>
-  <div class="container">
-    <a href="/" class="muted">← Back to ToolMetric</a>
+  <header class="nav container"><div class="logo">ToolMetric</div><nav class="nav-links"><a href="../">Home</a><a href="../blog/index.html">Blog</a><a href="../about.html">About</a><a href="../contact.html" class="cta">Contact</a></nav></header>
+  <main class="container">
+    <div class="ad-placeholder">[AdSense top placeholder]</div>
     <h1>Compress PDF to 200KB</h1>
-    <p class="muted">Reduce PDF file size using client-side processing. Files never leave your device.</p>
-
-    <div class="ad-placeholder">Ad placeholder (top)</div>
-
-    <div class="card" style="margin-top:12px">
-      <div id="uploader" class="upload-area">
-        <p>Drag & drop a PDF here, or <label class="btn" for="fileInput">Choose File</label></p>
-        <input id="fileInput" type="file" accept="application/pdf" class="hidden">
-      </div>
-      <div id="spinner" class="hidden"><div class="spinner"></div></div>
-      <div style="text-align:center;margin-top:12px">
-        <button id="processBtn" class="btn" disabled>Compress</button>
-        <a id="downloadLink" class="btn hidden">Download</a>
-      </div>
+    <p class="muted">Compress your PDF to a smaller file size directly in your browser. No upload required.</p>
+    <div class="tool-ui card">
+      <div class="dropzone" id="dropzone"><p>Drop a PDF</p><div class="filename muted">No file selected</div><input type="file" id="fileInput"></div>
+      <div class="controls"><button class="btn" id="processBtn">Compress</button></div>
+      <div class="progress"><i style="width:0%"></i></div>
     </div>
-
-    <div class="ad-placeholder" style="margin-top:12px">Ad placeholder (middle)</div>
-
-    <section style="margin-top:18px">
-      <h2>About this tool</h2>
-      <p>This tool compresses PDF files entirely in your browser using the pdf-lib JavaScript library. It creates a new PDF document and copies pages into it, which often reduces structural overhead. For advanced image recompression and aggressive downsampling a renderer (like pdf.js + canvas) is required; this tool focuses on privacy, speed, and client-side operation. The processing happens in memory and no file data is uploaded to any server.</p>
-
-      <p>Compression strategies: the tool attempts to recreate the PDF structure more compactly. If your PDF contains many high-resolution images, the best results come from first optimizing images before PDF creation. Still, many scanned and generated PDFs shrink noticeably.</p>
-
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ac neque nisi. Duis id tellus ac massa dapibus volutpat. Curabitur vulputate semper justo, at gravida arcu gravida in. Etiam dictum, lorem non maximus tristique, lorem nunc iaculis magna, vitae sodales neque augue in nibh. Proin sit amet augue non erat aliquet porta. Integer id luctus mi, at tempor magna. Sed hendrerit elit nec lectus congue facilisis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Integer id purus nec lorem tincidunt porta.</p>
-
-      <h3>How to use</h3>
-      <ol>
-        <li>Click or drag a PDF into the upload area.</li>
-        <li>Click <strong>Compress</strong> and wait for processing to finish.</li>
-        <li>Click <strong>Download</strong> to save your compressed PDF.</li>
-      </ol>
-
+    <div class="ad-placeholder">[AdSense middle placeholder]</div>
+    <article>
+      <h2>About Compress PDF to 200KB</h2>
+      <p>This tool compresses PDF files entirely in your browser. Files never leave your device. It creates a new PDF structure and copies pages into it, which often reduces file size. For best results with image-heavy PDFs, optimize images before compression.</p>
+      <h3>Step-by-step guide</h3>
+      <ol><li>Upload your PDF.</li><li>Click "Compress" to process.</li><li>Download your compressed PDF.</li></ol>
       <h3>FAQ</h3>
-      <details><summary>Will my file be uploaded?</summary><p>No. Processing is done locally in your browser.</p></details>
-      <details><summary>What if the file isn't smaller?</summary><p>Try using a dedicated image re-sampling tool before compressing.</p></details>
-      <details><summary>Which file types are supported?</summary><p>PDF only.</p></details>
-      <details><summary>Is there a file size limit?</summary><p>Depends on your device memory; large files may be slow.</p></details>
-      <details><summary>Can I batch compress?</summary><p>Not in this simple UI; use advanced scripts for bulk processing.</p></details>
-
-      <p>Related tools: <a href="/tools/remove-blank-pages.html">Remove Blank Pages</a>, <a href="/tools/split-pdf-by-range.html">Split by Range</a>, <a href="/tools/convert-pdf-to-bw.html">Convert to Black & White</a></p>
-    </section>
-
-    <div class="ad-placeholder" style="margin-top:12px">Ad placeholder (bottom)</div>
-  </div>
-
+      <div class="grid"><div class="faq-item"><strong>Will my file be uploaded?</strong><p>No. Processing happens locally in your browser.</p></div><div class="faq-item"><strong>What if the file isn't smaller?</strong><p>Try optimizing images before compression.</p></div><div class="faq-item"><strong>Is there a file size limit?</strong><p>Depends on your device memory.</p></div></div>
+      <h3>Related tools</h3>
+      <div class="grid"><a class="card" href="compress-pdf.html">Compress PDF</a><a class="card" href="remove-blank-pages.html">Remove Blank Pages</a><a class="card" href="split-pdf.html">Split PDF</a></div>
+    </article>
+    <div class="ad-placeholder">[AdSense bottom placeholder]</div>
+  </main>
+  <footer><div class="container footer-grid"><div><strong>ToolMetric</strong></div><div><a href="../legal/privacy-policy.html">Privacy</a></div></div></footer>
   <script>
-    // Tool page wiring
-    const fileInput = document.getElementById('fileInput');
-    const uploader = document.getElementById('uploader');
-    const processBtn = document.getElementById('processBtn');
-    const spinner = document.getElementById('spinner');
-    const downloadLink = document.getElementById('downloadLink');
-    let uploadedFile = null;
-
-    uploader.addEventListener('dragover', e => { e.preventDefault(); uploader.classList.add('drag'); });
-    uploader.addEventListener('dragleave', e => { uploader.classList.remove('drag'); });
-    uploader.addEventListener('drop', async e => {
-      e.preventDefault(); uploader.classList.remove('drag');
-      const f = e.dataTransfer.files?.[0];
-      if (f && f.type === 'application/pdf') handleFile(f);
-    });
-
-    fileInput.addEventListener('change', e => { const f = e.target.files?.[0]; if (f) handleFile(f); });
-
-    function handleFile(f) {
-      uploadedFile = f;
-      processBtn.disabled = false;
-      downloadLink.classList.add('hidden');
-    }
-
-    processBtn.addEventListener('click', async () => {
-      if (!uploadedFile) return;
-      spinner.classList.remove('hidden');
-      processBtn.disabled = true;
-      try {
-        const out = await window.toolmetric.compressPDF(uploadedFile);
-        const filename = (uploadedFile.name || 'document.pdf').replace(/\.pdf$/i, '') + '-compressed.pdf';
-        window.toolmetric.downloadBytes(out, filename);
-      } catch (err) {
-        alert('Error processing file: ' + (err && err.message));
-      } finally {
-        spinner.classList.add('hidden');
-        processBtn.disabled = false;
-      }
-    });
+    (function(){ const f=document.getElementById('fileInput'), btn=document.getElementById('processBtn'); btn.addEventListener('click',async()=>{ const file=f.files[0]; if(!file){alert('Choose a PDF');return} try{ await window.ToolMetric.compressPDF(file); }catch(e){console.error(e)} }); })();
   </script>
 </body>
 </html>

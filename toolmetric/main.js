@@ -7,6 +7,8 @@
 // Load pdf-lib from CDN dynamically if not present
 const PDF_LIB_URL = 'https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js';
 const PDFJS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.min.js';
+const PDFJS_WORKER_URL = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.worker.min.js';
+const DOCX_URL = 'https://cdn.jsdelivr.net/npm/docx/build/index.js';
 let PDFLibLoaded = false;
 async function ensurePdfLib(){
   if(window.PDFLib) { PDFLibLoaded = true; return; }
@@ -19,7 +21,26 @@ async function ensurePdfLib(){
 async function ensurePdfJs(){
   if(window.pdfjsLib) return;
   await new Promise((res,rej)=>{
-    const s=document.createElement('script');s.src=PDFJS_URL;s.onload=()=>{window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_URL;res();};s.onerror=rej;document.head.appendChild(s);
+    const s=document.createElement('script');
+    s.src=PDFJS_URL;
+    s.onload=()=>{
+      try{ window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER_URL; }catch(e){console.warn('Could not set pdfjs workerSrc', e)}
+      res();
+    };
+    s.onerror=rej;
+    document.head.appendChild(s);
+  });
+}
+
+async function ensureDocx(){
+  if(window.docx) return;
+  // docx exports as UMD, available as window.docx after loading
+  await new Promise((res,rej)=>{
+    const s=document.createElement('script');
+    s.src=DOCX_URL;
+    s.onload=res;
+    s.onerror=rej;
+    document.head.appendChild(s);
   });
 }
 
@@ -132,13 +153,23 @@ async function mergePDFs(files){
   }catch(err){handleError(err);throw err}
 }
 
-/* 6. pdfToWord - basic demo: extract text and wrap into .doc file */
+/* 6. pdfToWord - extract text and create proper .docx file */
 async function pdfToWord(file){
-  try{validatePDF(file); await ensurePdfLib(); showProgress(10);
-    // pdf-lib cannot reliably extract full text; try basic parsing via PDF.js
-    await ensurePdfJs(); const array = await file.arrayBuffer(); const loading = await pdfjsLib.getDocument({data:array}).promise; let outText='';
-    for(let p=1;p<=loading.numPages;p++){ const page = await loading.getPage(p); const content = await page.getTextContent(); const pageText = content.items.map(i=>i.str).join(' '); outText += '\n\n' + pageText; showProgress(10+80*p/loading.numPages); }
-    const blob = new Blob([outText],{type:'application/msword'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=file.name.replace(/\.pdf$/i,'')+'.doc'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),5000); showProgress(100); return blob;
+  try{validatePDF(file); await ensureDocx(); showProgress(10);
+    // pdf-lib cannot reliably extract full text; use PDF.js
+    await ensurePdfJs(); const array = await file.arrayBuffer(); const loading = await pdfjsLib.getDocument({data:array}).promise; let pages = [];
+    for(let p=1;p<=loading.numPages;p++){ const page = await loading.getPage(p); const content = await page.getTextContent(); const pageText = content.items.map(i=>i.str).join(' '); pages.push(pageText); showProgress(10+80*p/loading.numPages); }
+    // Use docx library to create proper Word document
+    const { Document, Packer, Paragraph, PageBreak } = window.docx;
+    const paragraphs = [];
+    for(let i=0;i<pages.length;i++){
+      if(i>0) paragraphs.push(new Paragraph({text:''})); // blank line between pages
+      paragraphs.push(new Paragraph({text:pages[i]||'(Page '+( i+1)+' is empty)'}));
+      if(i<pages.length-1) paragraphs.push(new PageBreak());
+    }
+    const doc = new Document({sections:[{children:paragraphs}]});
+    const blob = await Packer.toBlob(doc);
+    const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=file.name.replace(/\.pdf$/i,'')+'.docx'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),5000); showProgress(100); return blob;
   }catch(err){handleError(err);throw err}
 }
 
@@ -146,9 +177,45 @@ async function pdfToWord(file){
 async function wordToPDF(file){
   try{ if(!file) throw new Error('No file'); await ensurePdfLib(); showProgress(5);
     const text = await file.text(); const { PDFDocument, rgb, StandardFonts } = PDFLib; const pdfDoc = await PDFDocument.create(); const page = pdfDoc.addPage(); const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const size = 12; const margin=40; const lines = text.split(/\n/).slice(0,5000);
+    const size = 12; const margin=40; const rawLines = text.split(/\n/).slice(0,5000);
+    // Helper to sanitize lines to WinAnsi-compatible characters (fallback to '?')
+    const sanitize = (str) => String(str).replace(/[^\x00-\xFF]/g, '?');
     let y = page.getHeight()-margin;
-    for(const line of lines){ page.drawText(line,{x:margin,y, size, font, color:rgb(0,0,0)}); y -= size + 4; if(y<margin){ y = page.getHeight()-margin; }
+    // Try to embed a Unicode-capable font for proper encoding support. If embedding fails, fall back to sanitized WinAnsi text.
+    async function embedUnicodeFont(doc){
+      const candidates = [
+        'https://cdn.jsdelivr.net/gh/google/fonts@main/apache/roboto/Roboto-Regular.ttf',
+        'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/noto/NotoSans-Regular.ttf',
+        'https://github.com/dejavu-fonts/dejavu-fonts/raw/master/ttf/DejaVuSans.ttf'
+      ];
+      for(const url of candidates){
+        try{
+          const res = await fetch(url);
+          if(!res.ok) continue;
+          const bytes = await res.arrayBuffer();
+          return await doc.embedFont(bytes);
+        }catch(e){
+          console.warn('Font fetch failed for', url, e);
+          continue;
+        }
+      }
+      return null;
+    }
+
+    // Attempt Unicode font embedding
+    let usedFont = font;
+    try{
+      const ufont = await embedUnicodeFont(pdfDoc);
+      if(ufont) usedFont = ufont;
+    }catch(e){ console.warn('Unicode font embedding failed', e); }
+
+    try{
+      for(const line of rawLines){ const safe = sanitize(line); page.drawText(safe,{x:margin,y, size, font:usedFont, color:rgb(0,0,0)}); y -= size + 4; if(y<margin){ y = page.getHeight()-margin; }}
+    }catch(err){
+      // If drawing still fails, retry with sanitized content using the fallback font
+      console.warn('Initial drawText failed, retrying with sanitized text', err);
+      y = page.getHeight()-margin;
+      for(const line of rawLines){ const safe = sanitize(line); page.drawText(safe,{x:margin,y, size, font:usedFont, color:rgb(0,0,0)}); y -= size + 4; if(y<margin){ y = page.getHeight()-margin; }}
     }
     const bytes = await pdfDoc.save(); downloadPDF(bytes, file.name.replace(/\.docx?$/i,'')+'.pdf'); showProgress(100); return bytes;
   }catch(err){handleError(err);throw err}

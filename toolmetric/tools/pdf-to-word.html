@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>PDF to Word — ToolMetric</title>
-  <meta name="description" content="Convert PDF to Word (.doc) locally in browser. Text extraction demo; formatting may vary.">
+  <meta name="description" content="Convert PDF to Word (.docx) locally in browser. Extract text to editable Word document.">
   <link rel="stylesheet" href="../style.css">
   <script src="../main.js" defer></script>
 </head>
@@ -12,7 +12,7 @@
   <main class="container">
     <div class="ad-placeholder">[AdSense top placeholder]</div>
     <h1>PDF to Word</h1>
-    <p class="muted">Extract text from a PDF and download as a .doc file. This is a demo conversion; complex layouts may not be preserved.</p>
+    <p class="muted">Extract text from a PDF and download as a .docx file. Creates a properly formatted Word document.</p>
     <div class="tool-ui card">
       <div class="dropzone" id="dropzone"><p>Drop a PDF</p><div class="filename muted">No file selected</div><input type="file" id="fileInput"></div>
       <div class="controls"><button class="btn" id="processBtn">Convert</button></div>
@@ -21,9 +21,9 @@
     <div class="ad-placeholder">[AdSense middle placeholder]</div>
     <article>
       <h2>About PDF to Word</h2>
-      <p>This conversion uses PDF.js to extract textual content from each page then packs it into a simple .doc file. Styling and complex layout elements like multi-column text, tables, or embedded images may not be preserved. The tool is best for text-heavy documents where content extraction is the primary goal. Because the process runs locally in your browser, no document is uploaded, ensuring privacy. The output is a basic Word-compatible file that can be further edited in Microsoft Word or other word processors.</p>
+      <p>This conversion uses PDF.js to extract textual content from each page and creates a properly formatted .docx (Word) document using the docx library. Styling and complex layout elements like multi-column text, tables, or embedded images may not be preserved. The tool is best for text-heavy documents where content extraction is the primary goal. Because the process runs locally in your browser, no document is uploaded, ensuring privacy. The output is a .docx file that can be directly opened and edited in Microsoft Word or other compatible word processors.</p>
       <h3>Step-by-step guide</h3>
-      <ol><li>Upload your PDF.</li><li>Click "Convert" to extract text.</li><li>Save the .doc result and refine formatting in Word.</li></ol>
+      <ol><li>Upload your PDF.</li><li>Click "Convert" to extract text.</li><li>Save the .docx result and refine formatting in Word.</li></ol>
       <h3>FAQ</h3>
       <div class="grid"><div class="faq-item"><strong>Is formatting kept?</strong><p>Not fully — this is a text extraction focused tool.</p></div><div class="faq-item"><strong>Are images preserved?</strong><p>Images are not embedded in this simple conversion.</p></div><div class="faq-item"><strong>Files uploaded?</strong><p>No.</p></div><div class="faq-item"><strong>Free?</strong><p>Yes.</p></div><div class="faq-item"><strong>Supported browsers?</strong><p>Modern browsers.</p></div></div>
       <h3>Related tools</h3>

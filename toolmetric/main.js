@@ -155,21 +155,38 @@ async function mergePDFs(files){
 /* 6. pdfToWord - extract text and create proper .docx file */
 async function pdfToWord(file){
   try{validatePDF(file); showProgress(10);
-    // Extract text using PDF.js
-    await ensurePdfJs(); const array = await file.arrayBuffer(); const loading = await pdfjsLib.getDocument({data:array}).promise; let pages = [];
-    for(let p=1;p<=loading.numPages;p++){ const page = await loading.getPage(p); const content = await page.getTextContent(); const pageText = content.items.map(i=>i.str).join(' '); pages.push(pageText); showProgress(10+50*p/loading.numPages); }
+    // Extract text and render page images using PDF.js
+    await ensurePdfJs(); const array = await file.arrayBuffer(); const loading = await pdfjsLib.getDocument({data:array}).promise; let pages = []; const images = [];
+    for(let p=1;p<=loading.numPages;p++){
+      const page = await loading.getPage(p);
+      // text
+      const content = await page.getTextContent();
+      const pageText = content.items.map(i=>i.str).join(' ');
+      pages.push(pageText);
+
+      // render image snapshot of page to preserve layout (best-effort)
+      try{
+        const viewport = page.getViewport({scale:2});
+        const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d'); canvas.width = Math.round(viewport.width); canvas.height = Math.round(viewport.height);
+        await page.render({canvasContext:ctx, viewport}).promise;
+        const dataUrl = canvas.toDataURL('image/png'); const blob = dataURItoBlob(dataUrl);
+        images.push({blob, width: canvas.width, height: canvas.height});
+      }catch(e){console.warn('Page render failed for page', p, e);}
+
+      showProgress(10+50*p/loading.numPages);
+    }
     showProgress(60);
-    
-    // Create proper .docx using JSZip
+
+    // Create proper .docx using JSZip, including page images when available
     await ensureDocx();
-    const blob = await createProperDocx(pages);
-    
+    const blob = await createProperDocx(pages, images);
+
     const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=file.name.replace(/\.pdf$/i,'')+'.docx'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),5000); showProgress(100); return blob;
   }catch(err){handleError(err);throw err}
 }
 
 // Create a proper .docx file using JSZip
-async function createProperDocx(pages){
+async function createProperDocx(pages, images){
   const JSZip = window.JSZip;
   if(!JSZip) throw new Error('JSZip library not available');
   
@@ -177,10 +194,12 @@ async function createProperDocx(pages){
   const textContent = pages.join('\n\n');
   
   // Create [Content_Types].xml
+  // Include png default when images are provided
   const contentTypes = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
   <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
   <Default Extension="xml" ContentType="application/xml"/>
+  <Default Extension="png" ContentType="image/png"/>
   <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
 </Types>`;
   
@@ -191,25 +210,43 @@ async function createProperDocx(pages){
 </Relationships>`;
   
   // Create word/document.xml with escaped text
-  const escapedText = escapeXmlForDocx(textContent);
-  const document = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
-  <w:body>
-    <w:p>
-      <w:pPr>
-        <w:pStyle w:val="Normal"/>
-      </w:pPr>
-      <w:r>
-        <w:t>${escapedText}</w:t>
-      </w:r>
-    </w:p>
-  </w:body>
-</w:document>`;
+  // Build document.xml with text paragraphs and optional images
+  const escapedPages = pages.map(p=>escapeXmlForDocx(p));
+  let body = '';
+  for(let i=0;i<escapedPages.length;i++){
+    body += `<w:p><w:pPr><w:pStyle w:val="Normal"/></w:pPr><w:r><w:t>${escapedPages[i]}</w:t></w:r></w:p>`;
+    if(images && images[i]){
+      // Add an image paragraph placeholder; actual relationship ids will be rId100+i to avoid colliding with package rels
+      const id = i+100;
+      const img = images[i];
+      const cx = Math.round(img.width * 9525);
+      const cy = Math.round(img.height * 9525);
+      body += `<w:p><w:r><w:drawing><wp:inline xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"><wp:extent cx="${cx}" cy="${cy}"/><wp:docPr id="${id}" name="Picture ${id}"/><a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="0" name=""/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rId${id}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>`;
+    }
+  }
+
+  const document = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">\n  <w:body>\n    ${body}\n  </w:body>\n</w:document>`;
   
   // Add files to ZIP
   zip.file('[Content_Types].xml', contentTypes);
   zip.folder('_rels').file('.rels', rels);
   zip.folder('word').file('document.xml', document);
+
+  // If images provided, add them to word/media and create document rels
+  let docRels = [];
+  if(images && images.length){
+    const dr = [];
+    for(let i=0;i<images.length;i++){
+      const img = images[i];
+      const name = `media/image${i+1}.png`;
+      zip.folder('word').folder('media').file(`image${i+1}.png`, img.blob);
+      const rid = `rId${i+100}`;
+      dr.push({Id:rid, Type:'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image', Target:`media/image${i+1}.png`});
+    }
+    // write document rels
+    const docRelsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">\n  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>\n` + dr.map(d=>`  <Relationship Id="${d.Id}" Type="${d.Type}" Target="${d.Target}"/>`).join('\n') + '\n</Relationships>';
+    zip.folder('word').folder('_rels').file('document.xml.rels', docRelsXml);
+  }
   
   // Generate blob
   const blob = await zip.generateAsync({type:'blob'});

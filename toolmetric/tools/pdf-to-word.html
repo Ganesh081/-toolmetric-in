@@ -15,6 +15,10 @@
     <p class="muted">Extract text from a PDF and download as a .docx file. Creates a properly formatted Word document.</p>
     <div class="tool-ui card">
       <div class="dropzone" id="dropzone"><p>Drop a PDF</p><div class="filename muted">No file selected</div><input type="file" id="fileInput"></div>
+      <div class="options">
+        <label><input type="checkbox" id="includeImages"> Include page snapshots (may duplicate text)</label>
+        <label><input type="checkbox" id="forceOCR"> Force OCR on every page</label>
+      </div>
       <div class="controls"><button class="btn" id="processBtn">Convert</button></div>
       <div class="progress"><i style="width:0%"></i></div>
     </div>
@@ -32,8 +36,23 @@
     <div class="ad-placeholder">[AdSense bottom placeholder]</div>
   </main>
   <footer><div class="container footer-grid"><div><strong>ToolMetric</strong></div><div><a href="../legal/privacy-policy.html">Privacy</a></div></div></footer>
+  <!-- load optional libraries early so user code can refer to them immediately if desired -->
+  <script src="https://cdn.jsdelivr.net/npm/docx@7.1.0/build/index.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.1.1/dist/tesseract.min.js" defer></script>
   <script>
-    (function(){ const f=document.getElementById('fileInput'), btn=document.getElementById('processBtn'); btn.addEventListener('click',async()=>{ const file=f.files[0]; if(!file){alert('Choose a PDF');return} try{ await window.ToolMetric.pdfToWord(file); }catch(e){console.error(e)} }); })();
+    (function(){
+      const f = document.getElementById('fileInput');
+      const btn = document.getElementById('processBtn');
+      btn.addEventListener('click', async () => {
+        const file = f.files[0];
+        if(!file){ alert('Choose a PDF'); return; }
+        const includeImages = document.getElementById('includeImages').checked;
+        const forceOCR = document.getElementById('forceOCR').checked;
+        try {
+          await window.ToolMetric.pdfToWord(file, { includeImages, forceOCR });
+        } catch(e) { console.error(e); }
+      });
+    })();
   </script>
 </body>
 </html>
